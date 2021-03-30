@@ -7,6 +7,7 @@ import Filter from '../components/home/filter'
 import Header from '../elements/header'
 import JobItem from '../components/home/jobItem'
 import axios from 'axios'
+import { server } from '../config'
 
 const Wrapper = styled.div`
   display: flex;
@@ -52,7 +53,7 @@ export default function Home({article}) {
 
 
 export const getStaticProps = async()=>{
-  const res = await axios('http://localhost:3000/api/selectedPage?page=1')
+  const res = await axios(`${server}/api/selectedPage?page=1`)
   const article = res.data
   return{
       props:{
