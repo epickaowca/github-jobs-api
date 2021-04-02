@@ -2,9 +2,10 @@ import axios from 'axios'
 import { useRouter } from 'next/router'
 import { useSelector } from 'react-redux'
 import { useEffect, useState } from 'react'
+import { server } from '../../../config'
 
 const getJobDirectly = async (id)=>{
-    const res = await axios(`http://localhost:3000/api/selectedJob?id=${id}`)
+    const res = await axios(`${server}/api/selectedJob?id=${id}`)
     return res.data
 }
 

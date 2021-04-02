@@ -1,14 +1,15 @@
 import * as types from '../ducks/app'
 import { call, put, takeEvery, takeLatest, StrictEffect} from 'redux-saga/effects'
 import axios from 'axios'
-import { SetFiltersType } from '../ducks/app' 
+import { SetFiltersType } from '../ducks/app'
+import { server } from '../../config'
 
 function fetchJobs(options){
     let url
     if(options){
-        url = (`http://localhost:3000/api/selectedPage?${options.page ? 'page='+options.page : ''}${options.description ? 'description='+options.description : ''}&${options.fullTime ? 'full_time='+options.fullTime : ''}&${options.location ? 'location='+options.location : ''}`)
+        url = (`${server}/api/selectedPage?${options.page ? 'page='+options.page : ''}${options.description ? 'description='+options.description : ''}&${options.fullTime ? 'full_time='+options.fullTime : ''}&${options.location ? 'location='+options.location : ''}`)
     }else{
-        url = ('http://localhost:3000/api/selectedPage')
+        url = (`${server}/api/selectedPage`)
     }
     return axios.get(url)
     .then(res=>{
