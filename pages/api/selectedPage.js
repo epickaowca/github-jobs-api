@@ -9,6 +9,6 @@ export default async(req, res) => {
 
     const URL = `https://jobs.github.com/positions.json?${page ? 'page='+page : ''}${description ? '&description='+description : ''}${fullTime ? '&full_time=true' : ''}${location ? '&location='+location : ''}`
     const response = await axios(URL)
-
+    console.log(URL)
     res.status(200).json(response.data)
 }

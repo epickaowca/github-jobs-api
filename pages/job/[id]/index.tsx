@@ -1,34 +1,44 @@
 import axios from 'axios'
+import { useRouter } from 'next/router'
+import { useSelector } from 'react-redux'
+import { useEffect, useState } from 'react'
 
-const Job = ({article}) => {
+const getJobDirectly = async (id)=>{
+    const res = await axios(`http://localhost:3000/api/selectedJob?id=${id}`)
+    return res.data
+}
+
+
+const Job = () => {
+    const [jobState, setJobState] = useState()
+    const router = useRouter()
+    const jobs = useSelector(state => state.app.jobs)
+    const {id} = router.query
+    const [ rightJob ] = jobs.filter(j=>j.id === id) 
+    
+
+    useEffect(() => {
+        const asyncStuff = async()=>{
+            const rightJobReserve = await getJobDirectly(id)
+            setJobState(rightJobReserve)
+        }
+        if(!rightJob){
+            asyncStuff()
+        }else{
+            setJobState(rightJob)
+        }
+    }, [])
+
+    
+    console.log(jobState)
+
+
     return (
         <div>
             Article
         </div>
     )
 }
-
-
-// export const getStaticProps = async(context)=>{
-//     const res = await axios(`http://localhost:3000/api/selectedJob?id=${context.params.id}`)
-//     const article = res.data
-//     return{
-//         props:{
-//             article,
-//         }
-//     }
-// }
-
-// export const getStaticPaths = async ()=>{
-//     const res = await axios('http://localhost:3000/api/allJobs')
-//     const articles = res.data
-//     const ids = articles.map(article => article.id)
-//     const paths = ids.map(id => ({params: {id: id.toString()}}))
-//     return{
-//         paths: paths,
-//         fallback: false,
-//     }
-// }
 
 
 export default Job

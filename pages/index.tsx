@@ -26,15 +26,18 @@ const JobsSection = styled.section`
   justify-content: center;
 `
 
-export default function Home({article}) {
+export default function Home() {
   const dispatch = useDispatch()
+  const loading = useSelector(state=>state.app.homeLoading)
   const jobs = useSelector(state=>state.app.jobs)
   const darkMode = useSelector(state=>state.app.darkMode)
-  console.log(jobs)
+  const firstTimeIndex = useSelector(state=>state.app.firstTimeIndex)
+  const frendlyArr = Array.from(Array(9).keys())
+  useEffect(() => {    
+    if(!firstTimeIndex){
+      dispatch(passFirst50())
+    }
 
-
-  useEffect(() => {
-    dispatch(passFirst50(article))
   }, [])
   return (
     <Wrapper darkMode={darkMode}>
@@ -45,19 +48,8 @@ export default function Home({article}) {
       <Header />
       <Filter />
       <JobsSection>
-        {jobs.length && jobs.map((job, index)=><JobItem props={job} key={index}></JobItem>)}
+        {loading ? frendlyArr.map(e=><JobItem key={e} loadingCase />) : jobs.length ? jobs.map((job, index)=><JobItem props={job} key={index}></JobItem>) : 'brak wyników'}
       </JobsSection>
     </Wrapper>
   )
-}
-
-
-export const getStaticProps = async()=>{
-  const res = await axios(`${server}/api/selectedPage?page=1`)
-  const article = res.data
-  return{
-      props:{
-          article,
-      }
-  }
 }

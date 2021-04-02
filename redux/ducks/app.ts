@@ -13,6 +13,9 @@ export interface appStateInterface{
     readonly filtersOn: boolean
     readonly filters: Filters
     readonly isThereMore: boolean
+    readonly firstTimeIndex: boolean
+    readonly homeLoading: boolean
+    readonly selectedJobLoading: boolean
 }
 
 type Filters = {
@@ -32,7 +35,10 @@ const initialState:appStateInterface={
     },
     page: 1,
     filtersOn: false,
-    isThereMore: false
+    isThereMore: false,
+    firstTimeIndex: false,
+    homeLoading: false,
+    selectedJobLoading: false
 }
 
 const reducer = (state = initialState, action:ActionTypes)=>{
@@ -40,7 +46,8 @@ const reducer = (state = initialState, action:ActionTypes)=>{
         case FIRST_50:
             return{
                 ...state,
-                jobs: action.payload
+                firstTimeIndex: true,
+                homeLoading: true
             }
         case DARK_MODE:
             return{
@@ -51,18 +58,20 @@ const reducer = (state = initialState, action:ActionTypes)=>{
             return{
                 ...state,
                 jobs: action.jobs,
-                isThereMore: action.isMore
+                isThereMore: action.isMore,
+                homeLoading: false
             }
         case FETCH_JOBS_FAIL:
             return{
                 ...state,
-                error: true
+                error: true,
+                homeLoading: false
             }
-        case SET_FILTERS:{
+        case SET_FILTERS:
             return{
                 ...state,
-                filters: action.payload
-            }
+                filters: action.payload,
+                homeLoading: true
             }
         default: return state
     }
@@ -73,7 +82,7 @@ export type FetchJobsSuccesType = {type: typeof FETCH_JOBS_SUCCES, jobs: any, is
 export type FetchJobsFailType = {type: typeof FETCH_JOBS_FAIL}
 export type FetchJobsType = {type: typeof FETCH_JOBS, }
 export type SetFiltersType = {type: typeof SET_FILTERS, payload: Filters }
-export type First50Type = {type: typeof FIRST_50, payload: []}
+export type First50Type = {type: typeof FIRST_50}
 
 
 
@@ -84,6 +93,6 @@ export type ActionTypes = DarkModeType | FetchJobsSuccesType | FetchJobsFailType
 export const fetchJobs = ():ActionTypes=>({type:FETCH_JOBS })
 export const darkMode = ():ActionTypes=>({type:DARK_MODE})
 export const setFilters = (payload: Filters):ActionTypes=>({type:SET_FILTERS, payload})
-export const passFirst50 = (payload:[]):ActionTypes=>({type:FIRST_50, payload})
+export const passFirst50 = ():ActionTypes=>({type:FIRST_50})
 
 export default reducer
