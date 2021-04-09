@@ -1,16 +1,14 @@
-import React from 'react'
 import styled from 'styled-components'
 import Image from 'next/image'
 import Button from '../../../elements/button'
-import { setFilters } from '../../../redux/ducks/app'
-import { useDispatch } from 'react-redux'
+import { fetchForJobs } from '../../../redux/ducks/app'
+import { useDispatch, useSelector } from 'react-redux'
 import { useTheme, useUpdateTheme, changeFiltersFunc } from './stateFilter'
 
-const StyledLocationFilter = styled.div`
+const StyledLocationFilter = styled.div`    
     z-index: 70;
     border-radius: 10px;    
     padding: 25px 0px;
-    background: white;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -37,7 +35,7 @@ const StyledLocationFilter = styled.div`
                 outline: none;
                 border: none;
                 &:hover{
-                    border-bottom: 1px solid black;
+                    opacity: .8;
                 }
             }
         }
@@ -50,6 +48,7 @@ const StyledLocationFilter = styled.div`
                     margin-right: 25px;
                 }
                 & > label{
+                    color: ${p=>p.darkMode ? 'rgba(255,255,255,.89)' : 'black'};
                     display: flex;
                     font-weight: bold;
                     & > p{
@@ -129,16 +128,17 @@ interface LocationFilterInterface {
 }
 
 const LocationFilter:React.FC<LocationFilterInterface> = ({props, changeProps}) => {
+    const darkMode = useSelector(state=>state.app.darkMode)
     const dispatch = useDispatch()
     const localState = useTheme()
     const updateLocalState = useUpdateTheme()
-    console.log(localState)
     const searchHandler = ()=>{
         changeProps(false)
-        dispatch(setFilters(localState))
+        const { description, location, fullTime } = localState
+        dispatch(fetchForJobs({description, location, fullTime, clearPrevious: true, loadingCase: 'homeLoading', jobName: 'jobs'}))
     }
     return (
-        <StyledLocationFilter props={props}>
+        <StyledLocationFilter darkMode={darkMode} props={props}>
             <div>
                 <Image
                     src="/assets/desktop/icon-location.svg"
@@ -159,4 +159,4 @@ const LocationFilter:React.FC<LocationFilterInterface> = ({props, changeProps}) 
     )
 }
 
-export default React.memo(LocationFilter)
+export default LocationFilter

@@ -1,7 +1,9 @@
+import React from 'react'
 import styled from 'styled-components'
 import Moon from '../../public/assets/desktop/icon-moon.svg'
 import Sun from '../../public/assets/desktop/icon-sun.svg'
-
+import { useSelector, useDispatch} from 'react-redux'
+import { setDarkMode } from '../../redux/ducks/app'
 const StyledDarkMode = styled.section`
     display: flex;
     justify-content: center;
@@ -40,13 +42,15 @@ const StyledCheckBox = styled.input`
 `
 
 function DarkMode() {
+    const darkMode = useSelector(state=>state.app.darkMode)
+    const dispatch = useDispatch()
     return (
         <StyledDarkMode>
             <Sun />
-            <StyledCheckBox type='checkbox'  />
+            <StyledCheckBox type='checkbox' checked={darkMode} onChange={e=>dispatch(setDarkMode(e.target.checked))}  />
             <Moon />
         </StyledDarkMode>
     )
 }
 
-export default DarkMode
+export default React.memo(DarkMode)

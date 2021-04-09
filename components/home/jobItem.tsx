@@ -1,21 +1,29 @@
+import React from 'react'
 import styled from 'styled-components'
 import Link from 'next/link'
+import timeConverter from '../../elements/timeConverter'
+import { useSelector } from 'react-redux'
+
 
 const StyledJobItem = styled.div`
-background: white;
+border-radius: 15px;
+background: ${p=>p.darkMode ? p.theme.very_dark_blue : 'white'};
 position: relative;
 max-width: 320px;
 height: 220px;
 width: ${p=>p.loadingCase ? '320px' : '80%'};
 margin: 25px;
-padding: 25px;
 & > div{
+    cursor: pointer;
+    padding: 25px;
     width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    
+    &:hover{
+        opacity: .8;
+    }
     & > img{
         border-radius: 15px;
         top: 0px;
@@ -34,15 +42,17 @@ padding: 25px;
                 align-items: flex-end;
             `}
             & > span{
+                color: ${p=>p.darkMode ? 'white' : 'black'};
                 opacity: .6;
                 ${p=>p.loadingCase && `
-                    max-width: 60px;
-                    width: 100%;
-                    height: 22px;
-                    background: #E2E2E2;
+                max-width: 60px;
+                width: 100%;
+                height: 22px;
+                background: #E2E2E2;
                 `}
             }
             & > strong{
+                color: ${p=>p.darkMode ? 'white' : 'black'};
                 font-weight: bold;
                 margin: 0px 15px;
                 ${p=>p.loadingCase && `
@@ -55,6 +65,7 @@ padding: 25px;
         }
     
         & > h3{
+            color: ${p=>p.darkMode ? 'rgba(255,255,255,.89)' : 'black'};
             font-size: 1.1rem;
             ${p=>p.loadingCase && `
                 animation: loading 2s 1.5s infinite;
@@ -66,6 +77,7 @@ padding: 25px;
         }
     
         & > p{
+            color: ${p=>p.darkMode ? 'white' : 'black'};
             margin: 15px 0px;
             opacity: .6;
             ${p=>p.loadingCase && `
@@ -117,29 +129,15 @@ interface JobItemInterface {
 }
 
 const JobItem:React.FC<JobItemInterface> = ({props, loadingCase}) => {
-
-    const datanowa:any = new Date()
-    const datanowa2:any = props ? props.created_at : ''
-    const datanowa3:any =  new Date(datanowa2.replace(/-/g,'/'))
-    const milisecondsData = Math.abs(datanowa - datanowa3)
+    const darkMode = useSelector(state=>state.app.darkMode)
     let howManyAgo
     if(props){
-        if(milisecondsData > 0 && milisecondsData < 60000){
-            howManyAgo = 'przed chwilą'
-        }else if(milisecondsData >= 60000 && milisecondsData <3600000){
-          const result = milisecondsData/60000
-          howManyAgo = result.toFixed(0)+'min ago'
-        }else if(milisecondsData >= 3600000 && milisecondsData <86400000){
-          const result = milisecondsData/3600000
-          howManyAgo = result.toFixed(0)+'hours ago'
-        }else {
-          const result = milisecondsData/86400000
-          howManyAgo = result.toFixed(0)+'days ago'
-        }
+        howManyAgo = timeConverter(props.created_at)
     }
 
+
     return (
-        <StyledJobItem loadingCase={loadingCase}>
+        <StyledJobItem darkMode={darkMode} loadingCase={loadingCase}>
             <Link href={loadingCase ?  '#' : `/job/${props.id}`}>
                 <div>
                     <img src={loadingCase ? '/assets/greyBG.png' : props.company_logo ? props.company_logo : '/assets/noPhoto.jpg'} alt='alt' />
@@ -159,4 +157,4 @@ const JobItem:React.FC<JobItemInterface> = ({props, loadingCase}) => {
     )
 }
 
-export default JobItem
+export default React.memo(JobItem)

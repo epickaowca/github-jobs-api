@@ -1,8 +1,8 @@
 import styled from 'styled-components'
 import FilterIco from '../../../public/assets/mobile/icon-filter.svg'
 import Loupe from '../../../public/assets/desktop/icon-search.svg'
-import { setFilters } from '../../../redux/ducks/app'
-import { useDispatch, useSelector } from 'react-redux'
+import { fetchForJobs } from '../../../redux/ducks/app'
+import { useDispatch } from 'react-redux'
 import React from 'react'
 import { useTheme, useUpdateTheme, changeFiltersFunc } from './stateFilter'
 
@@ -19,7 +19,7 @@ align-items: center;
     outline: none;
     border: none;
     &:hover{
-        border-bottom: 1px solid black;
+        opacity: .8;
     }
 }
 & > div{
@@ -80,11 +80,16 @@ const TitleFilter:React.FC<TitleFilterInterface> = ({changeProps}) => {
     const dispatch = useDispatch()
     const localState = useTheme()
     const localDispatch = useUpdateTheme()
+
+    const searchHandler = ()=>{
+        const { description, location, fullTime } = localState
+        dispatch(fetchForJobs({description, location, fullTime, clearPrevious: true, loadingCase: 'homeLoading', jobName: 'jobs'}))
+    } 
     return (
         <StyledtitleFilter>
             <div>
                 <FilterIco onClick={()=>changeProps(true)} />
-                <div onClick={()=>dispatch(setFilters(localState))}>
+                <div onClick={searchHandler}>
                     <Loupe />
                 </div>
             </div>

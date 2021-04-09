@@ -3,7 +3,6 @@
 html,
 body {
   height: 100%;
-  background-color: #F4F6F8;
   overflow-x: hidden;
 }
 
@@ -18,6 +17,6 @@ a {
   box-sizing: border-box;
 }
 
-h1,h2,h3,h4,p,span,button,input{
+h1,h2,h3,h4,p,span,button,input, li, strong, b, i, em, mark, small, del, ins, sub, sup{
   font-family: 'Kumbh Sans', sans-serif;
 }

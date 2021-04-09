@@ -1,13 +1,18 @@
-import {useEffect} from 'react'
+import { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import Head from 'next/head'
-import { passFirst50 } from '../redux/ducks/app'
-import styled from 'styled-components'
+import { fetchForJobs } from '../redux/ducks/app'
+import styled, {createGlobalStyle} from 'styled-components'
 import Filter from '../components/home/filter'
 import Header from '../elements/header'
 import JobItem from '../components/home/jobItem'
-import axios from 'axios'
-import { server } from '../config'
+import Button from '../elements/button'
+
+const GlobalStyle = createGlobalStyle`
+  body {
+    background-color: ${p=>p.darkMode ? p.theme.midnight : p.theme.light_gray};
+  }
+`
 
 const Wrapper = styled.div`
   display: flex;
@@ -15,6 +20,10 @@ const Wrapper = styled.div`
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
+  & > button{
+    margin-top: 50px;
+    margin-bottom: 100px;
+  }
 `
 
 const JobsSection = styled.section`
@@ -22,25 +31,40 @@ const JobsSection = styled.section`
   display: flex;
   flex-wrap: wrap;
   margin: auto;
-  margin-top: 50px;
+  margin-top: 80px;
   justify-content: center;
 `
 
-export default function Home() {
+let firstTimeIndex = true
+const Home = ()=> {
+  const [page, setPage] = useState(1)
   const dispatch = useDispatch()
   const loading = useSelector(state=>state.app.homeLoading)
   const jobs = useSelector(state=>state.app.jobs)
   const darkMode = useSelector(state=>state.app.darkMode)
-  const firstTimeIndex = useSelector(state=>state.app.firstTimeIndex)
-  const frendlyArr = Array.from(Array(9).keys())
-  useEffect(() => {    
-    if(!firstTimeIndex){
-      dispatch(passFirst50())
-    }
+  const isMore = useSelector(state=>state.app.isThereMore)
+  
+  const friendlyArr = Array.from(Array(9).keys())
+  const loadingArray = [...jobs, ...friendlyArr]
 
-  }, [])
+  const loadingJSX = loadingArray.map((e,index)=><JobItem key={index} {...(typeof e ==='number' ? { loadingCase: true } : {props: e} )} />)
+  const itemJSX = jobs.map((job)=><JobItem props={job} key={job.id}></JobItem>)
+
+  useEffect(() => {
+      if(firstTimeIndex){
+        firstTimeIndex = false
+        dispatch(fetchForJobs({clearPrevious:true, loadingCase: 'homeLoading', jobName:'jobs'}))        
+      }
+  }, [firstTimeIndex])
+
+  const loadMoreHandler = ()=>{
+    dispatch(fetchForJobs({page:page+1, loadingCase: 'homeLoading', jobName:'jobs'}))
+    setPage(prev=>prev+1)
+  }
+
   return (
     <Wrapper darkMode={darkMode}>
+      <GlobalStyle darkMode={darkMode} />
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>git hub jobs api project</title>
@@ -48,8 +72,11 @@ export default function Home() {
       <Header />
       <Filter />
       <JobsSection>
-        {loading ? frendlyArr.map(e=><JobItem key={e} loadingCase />) : jobs.length ? jobs.map((job, index)=><JobItem props={job} key={index}></JobItem>) : 'brak wyników'}
+        {loading ? loadingJSX : jobs.length ?  itemJSX : <h1>nothing here</h1>}
       </JobsSection>
+      {loading ? '' : isMore && <Button clickFunc={loadMoreHandler} content="Load More"  />}
     </Wrapper>
   )
 }
+
+export default Home

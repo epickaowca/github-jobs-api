@@ -1,11 +1,13 @@
+import React from 'react'
 import styled from 'styled-components'
 import TitleFilter from './titleFilter'
 import LocationFilter from './locationFilter'
 import { useState } from 'react'
 import { ThemeProvider } from './stateFilter'
+import { useSelector } from 'react-redux'
 
 const StyledFilter = styled.section`
-    background: white;
+    background: ${p=>p.darkMode ? p.theme.very_dark_blue : 'white'};
     border-radius: 15px;
     margin-top: -32px;
     & > div{
@@ -40,10 +42,10 @@ const StyledFilter = styled.section`
 
 const Filter = () => {
     const [locationVisible, setLocationVisible] = useState(false)
-    
+    const darkMode = useSelector(state=>state.app.darkMode);
     return (
         <ThemeProvider>
-            <StyledFilter locationVisible={locationVisible}>
+            <StyledFilter darkMode={darkMode} locationVisible={locationVisible}>
                 <TitleFilter changeProps={setLocationVisible} />
                 <LocationFilter changeProps={setLocationVisible} props={locationVisible} />
                 <div onClick={()=>setLocationVisible(false)}></div>
@@ -52,4 +54,4 @@ const Filter = () => {
     )
 }
 
-export default Filter
+export default React.memo(Filter)

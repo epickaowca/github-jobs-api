@@ -1,28 +1,21 @@
 export const DARK_MODE = 'app/dark_mode'
-export const FETCH_JOBS_SUCCES = 'app/fetch_jobs_succes'
-export const FETCH_JOBS_FAIL = 'app/fetch_jobs_fail'
-export const FETCH_JOBS = 'app/fetch_jobs'
-export const SET_FILTERS = 'app/set_filters'
-export const FIRST_50 = 'app/first_50'
+//nowe funckje
+export const FETCH_FOR_JOBS = 'app/fetch_for_jobs'
+export const FETCH_FOR_JOBS_SUCCES = 'app/fetch_for_jobs_succes'
+export const FETCH_FOR_JOBS_FAIELD = 'app/fetch_for_jobs_faield'
 
 export interface appStateInterface{
     readonly darkMode: boolean
     readonly jobs: []
     readonly error: boolean
-    readonly page: number
     readonly filtersOn: boolean
     readonly filters: Filters
     readonly isThereMore: boolean
-    readonly firstTimeIndex: boolean
     readonly homeLoading: boolean
     readonly selectedJobLoading: boolean
+    readonly selectedJob: {} | string
 }
 
-type Filters = {
-        location: string
-        description: string
-        fullTime: boolean
-}
 
 const initialState:appStateInterface={
     darkMode: false,
@@ -33,66 +26,82 @@ const initialState:appStateInterface={
         description: '',
         fullTime: false
     },
-    page: 1,
     filtersOn: false,
     isThereMore: false,
-    firstTimeIndex: false,
     homeLoading: false,
-    selectedJobLoading: false
+    selectedJobLoading: false,
+    selectedJob: {description: '', company: '', company_logo: '', company_url: '', created_at: '', location: '', type: '', title: '', how_to_apply: ''},
 }
 
 const reducer = (state = initialState, action:ActionTypes)=>{
     switch(action.type){
-        case FIRST_50:
-            return{
-                ...state,
-                firstTimeIndex: true,
-                homeLoading: true
-            }
+
         case DARK_MODE:
             return{
                 ...state,
-                darkMode: !state.darkMode
+                darkMode: action.payload
             }
-        case FETCH_JOBS_SUCCES:
+        case FETCH_FOR_JOBS:
             return{
                 ...state,
-                jobs: action.jobs,
-                isThereMore: action.isMore,
-                homeLoading: false
+                [action.payload.loadingCase]: true,
             }
-        case FETCH_JOBS_FAIL:
+        case FETCH_FOR_JOBS_SUCCES:{
+            const { jobValue } = action.payload
             return{
                 ...state,
-                error: true,
-                homeLoading: false
+                [action.payload.loadingCase]: false,
+                [action.payload.jobName]: Array.isArray(jobValue) ? action.payload.clearPrevious ? jobValue : [...state.jobs, ...jobValue] : jobValue,
+                isThereMore: action.payload.isMore
             }
-        case SET_FILTERS:
+        }
+        case FETCH_FOR_JOBS_FAIELD:{
             return{
                 ...state,
-                filters: action.payload,
-                homeLoading: true
+                [action.payload.jobName]: action.payload.errorValue,
+                [action.payload.loadingCase]: false,
             }
+        }
         default: return state
     }
 }
 
-export type DarkModeType = {type: typeof DARK_MODE}
-export type FetchJobsSuccesType = {type: typeof FETCH_JOBS_SUCCES, jobs: any, isMore: boolean}
-export type FetchJobsFailType = {type: typeof FETCH_JOBS_FAIL}
-export type FetchJobsType = {type: typeof FETCH_JOBS, }
-export type SetFiltersType = {type: typeof SET_FILTERS, payload: Filters }
-export type First50Type = {type: typeof FIRST_50}
+export type DarkModeType = {type: typeof DARK_MODE, payload: boolean}
+export type FetchForJobsType = {type: typeof FETCH_FOR_JOBS, payload: Filters}
+export type FetchForJobsSuccesType = {type: typeof FETCH_FOR_JOBS_SUCCES, payload: FetchSuccesType}
+export type FetchForJobsFaieldType = {type: typeof FETCH_FOR_JOBS_FAIELD, payload: FetchFaieldType}
+
+type Filters = {
+    location?: string
+    description?: string
+    fullTime?: boolean
+    page?: number
+    jobName?: string
+    loadingCase?: string
+    id?: string
+    clearPrevious?: boolean
+}
+
+export type FetchSuccesType = {
+    jobName?: string
+    jobValue?: [] | {}
+    loadingCase?: string
+    clearPrevious?: boolean
+    isMore:boolean
+}
+
+export type FetchFaieldType = {
+    jobName?: string
+    loadingCase?: string
+    errorValue?: string
+}
 
 
 
+export type ActionTypes = DarkModeType | FetchForJobsType | FetchForJobsSuccesType | FetchForJobsFaieldType
 
-export type ActionTypes = DarkModeType | FetchJobsSuccesType | FetchJobsFailType | FetchJobsType | SetFiltersType | First50Type
 
-
-export const fetchJobs = ():ActionTypes=>({type:FETCH_JOBS })
-export const darkMode = ():ActionTypes=>({type:DARK_MODE})
-export const setFilters = (payload: Filters):ActionTypes=>({type:SET_FILTERS, payload})
-export const passFirst50 = ():ActionTypes=>({type:FIRST_50})
+export const setDarkMode = (payload:boolean):ActionTypes=>({type:DARK_MODE, payload})
+export const fetchForJobs = (payload: Filters):ActionTypes=>({type:FETCH_FOR_JOBS, payload})
 
 export default reducer
