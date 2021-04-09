@@ -7,6 +7,7 @@ import JobInfo from '../../../components/job/jobInfo'
 import Header from '../../../elements/header'
 import Footer from '../../../components/job/footer'
 import { fetchForJobs } from '../../../redux/ducks/app'
+import Head from 'next/head'
 
 const StyledH1 = styled.h1`
     font-size: 3rem;
@@ -42,6 +43,9 @@ const Job = () => {
     const { company, company_logo, company_url, type, location, created_at, title, description, how_to_apply } = rightJob ? jobState : typeof selectedJobFromRedux === 'string' ? jobState : selectedJobFromRedux
     return (
         <>
+            <Head>
+                <title>gitHubJobsApi</title>
+            </Head>
             {typeof selectedJobFromRedux === 'string' ? 
             <div>
                 <GlobalStyle darkMode={darkMode} />

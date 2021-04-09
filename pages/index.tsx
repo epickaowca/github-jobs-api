@@ -64,7 +64,7 @@ const Home = ()=> {
       <GlobalStyle darkMode={darkMode} />
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>git hub jobs api project</title>
+        <title>gitHubJobsApi</title>
       </Head>
       <Header />
       <Filter />
