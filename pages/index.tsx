@@ -27,11 +27,8 @@ const Wrapper = styled.div`
 `
 
 const JobsSection = styled.section`
-  max-width: 1150px;
   display: flex;
-  flex-wrap: wrap;
   margin: auto;
-  margin-top: 80px;
   justify-content: center;
 `
 
@@ -71,7 +68,7 @@ const Home = ()=> {
       </Head>
       <Header />
       <Filter />
-      <JobsSection>
+      <JobsSection style={{maxWidth: '1150px', marginTop: '80px', flexWrap: 'wrap'}}>
         {loading ? loadingJSX : jobs.length ?  itemJSX : <h1>nothing here</h1>}
       </JobsSection>
       {loading ? '' : isMore && <Button clickFunc={loadMoreHandler} content="Load More"  />}
