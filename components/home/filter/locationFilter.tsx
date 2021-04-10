@@ -17,6 +17,7 @@ const StyledLocationFilter = styled.div`
     max-width: 350px;
     display: ${p=>p.props ? 'flex' : 'none'};
     flex-direction: column;
+    background: ${p=>p.darkMode ? p.theme.very_dark_blue : 'white' };
     & > div{
         &:nth-child(1){
             padding: 0px 25px;
@@ -34,6 +35,7 @@ const StyledLocationFilter = styled.div`
                 background: transparent;
                 outline: none;
                 border: none;
+                color: ${p=>p.darkMode ? 'rgba(255,255,255,.89)' : 'black'};
                 &:hover{
                     opacity: .8;
                 }

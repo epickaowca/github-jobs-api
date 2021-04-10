@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import FilterIco from '../../../public/assets/mobile/icon-filter.svg'
 import Loupe from '../../../public/assets/desktop/icon-search.svg'
 import { fetchForJobs } from '../../../redux/ducks/app'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import React from 'react'
 import { useTheme, useUpdateTheme, changeFiltersFunc } from './stateFilter'
 
@@ -13,6 +13,7 @@ flex-direction: row-reverse;
 justify-content: space-between;
 align-items: center;
 & > input{
+    color: ${p=>p.darkMode ? 'rgba(255,255,255,.89)' : 'black'};
     padding: 5px;
     font-size: 1rem;
     background: transparent;
@@ -80,13 +81,14 @@ const TitleFilter:React.FC<TitleFilterInterface> = ({changeProps}) => {
     const dispatch = useDispatch()
     const localState = useTheme()
     const localDispatch = useUpdateTheme()
+    const darkMode = useSelector(state=>state.app.darkMode)
 
     const searchHandler = ()=>{
         const { description, location, fullTime } = localState
         dispatch(fetchForJobs({description, location, fullTime, clearPrevious: true, loadingCase: 'homeLoading', jobName: 'jobs'}))
     } 
     return (
-        <StyledtitleFilter>
+        <StyledtitleFilter darkMode={darkMode}>
             <div>
                 <FilterIco onClick={()=>changeProps(true)} />
                 <div onClick={searchHandler}>
