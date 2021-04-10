@@ -50,8 +50,11 @@ const Wrapper = styled.section`
             & p, & li {
                 color: ${p=>p.darkMode ? 'rgba(255,255,255,.67)' : 'rgba(0,0,0,.67)'};
             }
+            & strong, & h1, & h2, & h3, & h4, & h5, & h6 {
+                color: ${p=>p.darkMode ? 'white' : 'black'};
+            }
             & a {
-                color: ${p=>p.darkMode ? 'rgba(255,255,255,1)' : 'rgba(0,0,0,1)'};
+                color: ${p=>p.darkMode ? 'white' : 'black'};
                 text-decoration: underline;
             }
         }
@@ -93,12 +96,13 @@ const Wrapper = styled.section`
                 }
                 & > h1{
                     color: ${p=>p.darkMode ? 'rgba(255,255,255,.89)' : 'black'};
-                    margin: 15px 0px;
+                }
+                & > h2{
+                    color: ${p=>p.darkMode ? 'rgba(255,255,255,.89)' : 'black'};
                 }
                 & > p{
                     font-weight: bold;
                     color: ${p=>p.theme.violet};
-                    margin: 0px !important;
                 }
             }
             & > button{
